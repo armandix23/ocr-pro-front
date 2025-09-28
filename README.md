@@ -45,7 +45,7 @@ Una aplicación Angular moderna y profesional con diseño futurista inspirado en
 
 2. **Clonar el repositorio**
    ```bash
-   git clone https://github.com/tu-usuario/ocr-pro.git
+   git clone https://github.com/armandix23/ocr-pro.git
    cd ocr-pro
    ```
 
@@ -76,7 +76,7 @@ Una aplicación Angular moderna y profesional con diseño futurista inspirado en
 
 2. **Clonar el repositorio**
    ```bash
-   git clone https://github.com/tu-usuario/ocr-pro.git
+   git clone https://github.com/armandix23/ocr-pro.git
    cd ocr-pro
    ```
 
@@ -265,7 +265,7 @@ Si tienes problemas:
 
 **OCR Pro** - Procesamiento de documentos con estilo futurista 🚀
 
-![GitHub stars](https://img.shields.io/github/stars/tu-usuario/ocr-pro?style=social)
-![GitHub forks](https://img.shields.io/github/forks/tu-usuario/ocr-pro?style=social)
-![GitHub issues](https://img.shields.io/github/issues/tu-usuario/ocr-pro)
-![GitHub license](https://img.shields.io/github/license/tu-usuario/ocr-pro)
+![GitHub stars](https://img.shields.io/github/stars/armandix23/ocr-pro?style=social)
+![GitHub forks](https://img.shields.io/github/forks/armandix23/ocr-pro?style=social)
+![GitHub issues](https://img.shields.io/github/issues/armandix23/ocr-pro)
+![GitHub license](https://img.shields.io/github/license/armandix23/ocr-pro)
