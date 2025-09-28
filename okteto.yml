@@ -1,0 +1,27 @@
+name: ocr-pro
+build:
+  frontend:
+    context: .
+    dockerfile: Dockerfile
+deploy:
+  frontend:
+    image: okteto.dev/ocr-pro-frontend:latest
+    public: true
+    ports:
+      - 80
+    environment:
+      - NODE_ENV=production
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: 500m
+      requests:
+        memory: 256Mi
+        cpu: 250m
+    healthchecks:
+      http:
+        path: /
+        port: 80
+    annotations:
+      dev.okteto.com/auto-ingress: "true"
+      dev.okteto.com/auto-ingress-host: "ocr-pro-frontend"

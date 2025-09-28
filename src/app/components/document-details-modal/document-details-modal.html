@@ -1,0 +1,166 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Detalles del Documento</h2>
+      <button class="close-btn" (click)="closeModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-content" *ngIf="documento">
+      <div class="document-summary">
+        <div class="summary-item">
+          <span class="label">Archivo:</span>
+          <span class="value">{{ documento.nombre }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Tipo:</span>
+          <span class="value type-badge" [style.color]="getDocumentTypeColor(documento.tipo)">
+            {{ documento.tipo }}
+          </span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Confianza:</span>
+          <span class="value confidence-badge" [class]="getConfidenceClass(documento.confianzaFinal)">
+            {{ formatConfidence(documento.confianzaFinal) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Header Section -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">📄</div>
+          <h3>Cabecera</h3>
+        </div>
+        <div class="section-content">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">NIF Emisor:</span>
+              <span class="info-value">{{ documento.resultado.cabecera.nif_emisor }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha Emisión:</span>
+              <span class="info-value">{{ formatDate(documento.resultado.cabecera.fecha_emision) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Empresa:</span>
+              <span class="info-value">{{ documento.resultado.cabecera.razon_social_emisora }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Número Documento:</span>
+              <span class="info-value">{{ documento.resultado.cabecera.numero_documento }}</span>
+            </div>
+            <div class="info-item" *ngIf="documento.resultado.cabecera.razon_social_receptor">
+              <span class="info-label">Cliente:</span>
+              <span class="info-value">{{ documento.resultado.cabecera.razon_social_receptor }}</span>
+            </div>
+            <div class="info-item" *ngIf="documento.resultado.cabecera.nif_receptor">
+              <span class="info-label">NIF Receptor:</span>
+              <span class="info-value">{{ documento.resultado.cabecera.nif_receptor }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lines Section -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">📋</div>
+          <h3>Líneas de Productos/Servicios</h3>
+        </div>
+        <div class="section-content">
+          <div class="lines-table">
+            <div class="table-header">
+              <div class="col-desc">Descripción</div>
+              <div class="col-qty">Cantidad</div>
+              <div class="col-price">Precio Unit.</div>
+              <div class="col-total">Total</div>
+              <div class="col-conf">Confianza</div>
+            </div>
+            <div class="table-body">
+              <div class="table-row" *ngFor="let linea of documento.resultado.lineas">
+                <div class="col-desc">{{ linea.descripcion }}</div>
+                <div class="col-qty">{{ linea.cantidad }}</div>
+                <div class="col-price">{{ formatCurrency(linea.precio_unitario) }}</div>
+                <div class="col-total">{{ formatCurrency(linea.importe_linea) }}</div>
+                <div class="col-conf">
+                  <span class="confidence-badge" [class]="getConfidenceClass(linea.confianza)">
+                    {{ formatConfidence(linea.confianza) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Totals Section -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">💰</div>
+          <h3>Totales</h3>
+        </div>
+        <div class="section-content">
+          <div class="totals-grid">
+            <div class="total-item">
+              <span class="total-label">Base Imponible:</span>
+              <span class="total-value">{{ formatCurrency(documento.resultado.totales.base_imponible) }}</span>
+            </div>
+            <div class="total-item" *ngFor="let ivaItem of documento.resultado.totales.iva | keyvalue">
+              <span class="total-label">IVA {{ ivaItem.key }}%:</span>
+              <span class="total-value">{{ formatCurrency(ivaItem.value) }}</span>
+            </div>
+            <div class="total-item final-total">
+              <span class="total-label">TOTAL:</span>
+              <span class="total-value">{{ formatCurrency(documento.resultado.totales.total) }} {{ documento.resultado.totales.moneda }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metadata Section -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">ℹ️</div>
+          <h3>Metadatos</h3>
+        </div>
+        <div class="section-content">
+          <div class="metadata-grid">
+            <div class="metadata-item">
+              <span class="metadata-label">Confianza OCR:</span>
+              <span class="metadata-value">{{ formatConfidence(documento.resultado.metadatos.confianza_ocr) }}</span>
+            </div>
+            <div class="metadata-item">
+              <span class="metadata-label">Requiere Revisión:</span>
+              <span class="metadata-value" [class]="documento.resultado.metadatos.requiere_revision ? 'warning' : 'success'">
+                {{ documento.resultado.metadatos.requiere_revision ? 'Sí' : 'No' }}
+              </span>
+            </div>
+            <div class="metadata-item">
+              <span class="metadata-label">Procesado:</span>
+              <span class="metadata-value">{{ formatDate(documento.resultado.metadatos.timestamp_procesamiento) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="action-btn download-btn" (click)="downloadJSON()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Descargar JSON
+      </button>
+      <button class="action-btn close-btn" (click)="closeModal()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
